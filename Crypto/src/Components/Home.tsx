@@ -42,14 +42,6 @@ const Home: React.FC = () => {
         setSearchValue("");
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="loader">Loading...</div>
-            </div>
-        );
-    }
-
     if (isError) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -102,8 +94,10 @@ const Home: React.FC = () => {
                         Refresh
                     </button>
                 </div>
-                {isRefetching ? (
-                    <h1>Loading....</h1>
+                {isLoading || isRefetching ? (
+                    <div className="flex justify-center items-center min-h-screen">
+                        <div className="loader">Loading...</div>
+                    </div>
                 ) : (
                     <CoinTable
                         coins={filterValue?.length ? filterValue : data}
