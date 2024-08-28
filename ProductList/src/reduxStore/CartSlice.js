@@ -20,21 +20,25 @@ const cartSlice = createSlice({
         },
 
         increaseQuantity: (state, action) => {
-            state.cartProduct = state.cartProduct.map((item) =>
-                item.id === action.payload
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
+            const existingProduct = state.cartProduct.find(
+                (item) => item.id === action.payload
             );
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            }
         },
         decreaseQuantity: (state, action) => {
-            state.cartProduct = state.cartProduct
-                .map((item) => {
-                    if (item.id === action.payload && item.quantity > 0) {
-                        return { ...item, quantity: item.quantity - 1 };
-                    }
-                    return item;
-                })
-                .filter((item) => item.quantity > 0);
+            const existingProduct = state.cartProduct.find(
+                (item) => item.id === action.payload
+            );
+
+            if (existingProduct && existingProduct.quantity > 1) {
+                existingProduct.quantity -= 1;
+            } else if (existingProduct && existingProduct.quantity === 1) {
+                state.cartProduct = state.cartProduct.filter(
+                    (item) => item.id !== action.payload
+                );
+            }
         },
 
         removeProduct: (state, action) => {
