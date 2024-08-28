@@ -11,6 +11,7 @@ const Home: React.FC = () => {
 
     const [searchValue, setSearchValue] = useState<string>("");
     const [filterValue, setFiltervalue] = useState<allCoin[] | undefined>();
+    const [isRefetching, setIsRefetching] = useState<boolean>(false);
 
     const inputHandler = (e: eventHandler) => {
         setSearchValue(e.target.value);
@@ -28,14 +29,19 @@ const Home: React.FC = () => {
             setFiltervalue(filterData);
         }
     };
+    const handleRefresh = async () => {
+        setIsRefetching(true); // Set refetching state to true
+        try {
+            await refetch(); // Wait for the refetch to complete
+        } catch (error) {
+            console.error("Error during refetch:", error);
+        } finally {
+            setIsRefetching(false); // Set refetching state to false
+        }
 
-    const handleRefresh = () => {
-        console.log("call refetch");
-
-        refetch();
-        console.log("call refetch after");
         setSearchValue("");
     };
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -96,7 +102,13 @@ const Home: React.FC = () => {
                         Refresh
                     </button>
                 </div>
-                <CoinTable coins={filterValue?.length ? filterValue : data} />
+                {isRefetching ? (
+                    <h1>Loading....</h1>
+                ) : (
+                    <CoinTable
+                        coins={filterValue?.length ? filterValue : data}
+                    />
+                )}
             </div>
         </div>
     );
